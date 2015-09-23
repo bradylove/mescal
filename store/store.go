@@ -64,7 +64,7 @@ StoreHandler:
 		case msg.GetCommand:
 			s.handleGetCommand(m.Command, sb, m.writer) // Should the m.writer be m.Writer?
 		case msg.SetCommand:
-			s.handleSetCommand(m.Command, sb, m.Writer)
+			s.handleSetCommand(m.Command, sb, m.writer)
 		default:
 			fmt.Println("Unknown command")
 		}
