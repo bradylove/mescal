@@ -3,9 +3,9 @@ Mescal is an in memory key/value store written in Go.
 
 ** Setup for development
 
-- Install [Go](http://golang.org)
-- Install [capnproto](https://capnproto.org/install.html)
-- Install Go dependencies
+- Install Go (http://golang.org)
+- Install capnproto (https://capnproto.org/install.html)
+- Install Mescal dependencies
 
 #+BEGIN_SRC bash
 $ go get -u -t zombiezen.com/go/capnproto/...
@@ -17,7 +17,7 @@ $ go test -v ./...
 #+END_SRC
 
 ** Build server
-   #+BEGIN_SRC bash
+#+BEGIN_SRC bash
 $ cd server
 $ go build -i
 #+END_SRC
