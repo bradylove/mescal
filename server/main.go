@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/bradylove/mescal/msg"
-	"io"
+	"crypto/rand"
+	"errors"
+	"fmt"
 	"log"
 	"net"
 )
@@ -12,32 +13,6 @@ var cfg Config
 const (
 	version = "0.1.0"
 )
-
-func handleConnection(conn net.Conn) {
-HandlerLoop:
-	for {
-		decodedCmd, err := msg.DecodeCommand(conn)
-		if err != nil {
-			if err == io.EOF {
-				log.Println("Client disconnected")
-				conn.Close()
-				break HandlerLoop
-			}
-			panic(err)
-		}
-
-		switch sb := decodedCmd.SubCommand.(type) {
-		case msg.GetCommand:
-			log.Printf("Command received action=%d subCommand=GetCommand key=%s\n",
-				decodedCmd.Action,
-				sb.Key)
-
-			decodedCmd.Encode(conn)
-		default:
-			log.Println("Unknown sub command received")
-		}
-	}
-}
 
 func main() {
 	cfg = NewConfig()
@@ -57,8 +32,31 @@ func main() {
 			log.Println("Client failed to open new connection:", err.Error())
 		}
 
-		log.Println("New connection opened")
+		id, err := newUUID()
+		if err != nil {
+			log.Println("Failed to create unique ID for new client")
+			conn.Close()
+			continue
+		}
 
-		go handleConnection(conn)
+		log.Printf("New connection opened clientId=%s", id)
+
+		c := NewClient(id, conn)
+		go c.handle()
 	}
+}
+
+func newUUID() (string, error) {
+	b := make([]byte, 16)
+
+	n, err := rand.Read(b)
+	if err != nil {
+		return "", err
+	}
+
+	if n != len(b) {
+		return "", errors.New("Failed to read enough random bytes for UUID")
+	}
+
+	return fmt.Sprintf("%x-%x-%x-%x-%x", b[0:4], b[4:6], b[6:8], b[8:10], b[10:]), nil
 }

@@ -13,6 +13,20 @@ func main() {
 		fmt.Println("Failed to open connection:", err)
 	}
 
+	cmd := msg.NewCommand("1234", msg.NewHandshakeCommand("mescal go version 1.2.3"))
+	if err = cmd.Encode(conn); err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	res, err := msg.DecodeResult(conn)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(res.Id)
+	fmt.Printf("%+v", res.SubResult.(msg.HandshakeResult))
+
 	for {
 		fmt.Println("\n\n")
 		time.Sleep(1 * time.Second)
