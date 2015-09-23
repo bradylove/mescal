@@ -60,10 +60,12 @@ StoreHandler:
 		if !ok {
 			break StoreHandler
 		}
-
+		// TODO do we need to add a case statement for the 'set' cmd
+		// case msg.SetCommand:
+		//   s.handleSetCommand(m.Command, sb, m.Writer)
 		switch sb := m.SubCommand.(type) {
 		case msg.GetCommand:
-			s.handleGetCommand(m.Command, sb, m.writer)
+			s.handleGetCommand(m.Command, sb, m.writer) // Should the m.writer be m.Writer?
 		default:
 			fmt.Println("Unknown command")
 		}
@@ -84,6 +86,17 @@ func (s *Store) handleGetCommand(cmd *msg.Command, sb msg.GetCommand, w io.Write
 	res.Encode(w)
 }
 
+func (s *Store) handleSetCommand(cmd *msg.Command, sb msg.SetCommand, w io.Writer) {
+	obj := s.objects[sb.Key]
+
+	res := msg.NewResult(
+		cmd.Id,
+		msg.StatusSuccess,
+		msg.NewSetResult(obj.key, obj.value, obj.expiry),
+	)
+
+	res.Encode(w)
+}
 func (s *Store) HandleCommand(cmd *msg.Command, w io.Writer) {
 	s.msgs <- message{cmd, w}
 }
