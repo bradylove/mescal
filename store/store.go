@@ -60,12 +60,11 @@ StoreHandler:
 		if !ok {
 			break StoreHandler
 		}
-		// TODO do we need to add a case statement for the 'set' cmd
-		// case msg.SetCommand:
-		//   s.handleSetCommand(m.Command, sb, m.Writer)
 		switch sb := m.SubCommand.(type) {
 		case msg.GetCommand:
 			s.handleGetCommand(m.Command, sb, m.writer) // Should the m.writer be m.Writer?
+		case msg.SetCommand:
+			s.handleSetCommand(m.Command, sb, m.Writer)
 		default:
 			fmt.Println("Unknown command")
 		}
