@@ -86,7 +86,7 @@ func (s *Store) handleGetCommand(cmd *msg.Command, sb msg.GetCommand, w io.Write
 }
 
 func (s *Store) handleSetCommand(cmd *msg.Command, sb msg.SetCommand, w io.Writer) {
-
+	s.objects[sb.Key] = object{sb.Key, sb.Value, sb.Expiry}
 	res := msg.NewResult(
 		cmd.Id,
 		msg.StatusSuccess,
