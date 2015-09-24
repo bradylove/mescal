@@ -86,12 +86,11 @@ func (s *Store) handleGetCommand(cmd *msg.Command, sb msg.GetCommand, w io.Write
 }
 
 func (s *Store) handleSetCommand(cmd *msg.Command, sb msg.SetCommand, w io.Writer) {
-	obj := s.objects[sb.Key]
 
 	res := msg.NewResult(
 		cmd.Id,
 		msg.StatusSuccess,
-		msg.NewSetResult(obj.key, obj.value, obj.expiry),
+		msg.NewSetResult(),
 	)
 
 	res.Encode(w)
