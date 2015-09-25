@@ -30,3 +30,9 @@ func TestHandleCommandWithGetCommand(t *testing.T) {
 		}
 	}
 }
+
+//func TestHandleCommandWithSetCommand(t *testing.T) {
+//	t.Log("Given I have a set command")
+//	{
+//	}
+//}

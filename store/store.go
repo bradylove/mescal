@@ -96,6 +96,7 @@ func (s *Store) handleSetCommand(cmd *msg.Command, sb msg.SetCommand, w io.Write
 
 	res.Encode(w)
 }
+
 func (s *Store) HandleCommand(cmd *msg.Command, w io.Writer) {
 	s.msgs <- message{cmd, w}
 }
