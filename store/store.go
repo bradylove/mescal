@@ -60,9 +60,10 @@ StoreHandler:
 		if !ok {
 			break StoreHandler
 		}
+
 		switch sb := m.SubCommand.(type) {
 		case msg.GetCommand:
-			s.handleGetCommand(m.Command, sb, m.writer) // Should the m.writer be m.Writer?
+			s.handleGetCommand(m.Command, sb, m.writer)
 		case msg.SetCommand:
 			s.handleSetCommand(m.Command, sb, m.writer)
 		default:
