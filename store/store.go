@@ -64,6 +64,8 @@ StoreHandler:
 		switch sb := m.SubCommand.(type) {
 		case msg.GetCommand:
 			s.handleGetCommand(m.Command, sb, m.writer)
+		case msg.SetCommand:
+			s.handleSetCommand(m.Command, sb, m.writer)
 		default:
 			fmt.Println("Unknown command")
 		}
@@ -79,6 +81,18 @@ func (s *Store) handleGetCommand(cmd *msg.Command, sb msg.GetCommand, w io.Write
 		cmd.Id,
 		msg.StatusSuccess,
 		msg.NewGetResult(obj.key, obj.value, obj.expiry),
+	)
+
+	res.Encode(w)
+}
+
+func (s *Store) handleSetCommand(cmd *msg.Command, sb msg.SetCommand, w io.Writer) {
+	s.objects[sb.Key] = object{sb.Key, sb.Value, sb.Expiry}
+
+	res := msg.NewResult(
+		cmd.Id,
+		msg.StatusSuccess,
+		msg.NewSetResult(),
 	)
 
 	res.Encode(w)

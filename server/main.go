@@ -33,6 +33,12 @@ HandlerLoop:
 				sb.Key)
 
 			decodedCmd.Encode(conn)
+		case msg.SetCommand:
+			log.Printf("Command recieved action=%d subCommand=SetCommand key=%s value=%s expiry=%d\n",
+				decodedCmd.Action,
+				sb.Key, sb.Value, sb.Expiry)
+
+			decodedCmd.Encode(conn)
 		default:
 			log.Println("Unknown sub command received")
 		}

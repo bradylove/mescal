@@ -30,3 +30,22 @@ func TestHandleCommandWithGetCommand(t *testing.T) {
 		}
 	}
 }
+
+func TestHandleCommandWithSetCommand(t *testing.T) {
+	t.Log("Given I have a set command")
+	{
+		var b []byte
+		buf := bytes.NewBuffer(b)
+		sr := store.NewStore()
+		cmd := msg.NewCommand("6790", msg.NewSetCommand("bar", "baz", 10000))
+		sr.HandleCommand(cmd, buf)
+		sr.Close()
+		sr.Wait()
+
+		if len(buf.Bytes()) > 40 {
+			t.Logf("It should have bytes %s", succeed)
+		} else {
+			t.Fatalf("It should have bytes %s", failed)
+		}
+	}
+}
