@@ -21,6 +21,9 @@ func main() {
 	log.SetFlags(log.LUTC | log.Ldate | log.Ltime | log.Lshortfile)
 	log.Println("Starting Mescal on port :" + cfg.Port)
 
+}
+
+func runServer() {
 	ln, err := net.Listen("tcp", ":"+cfg.Port)
 	if err != nil {
 		log.Println("Failed to start server:", err.Error())

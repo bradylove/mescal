@@ -37,6 +37,10 @@ func DecodeCommand(r io.Reader) (*Command, error) {
 	}
 
 	var cmd Command
+	cmd.Id, err = m.Id()
+	if err != nil {
+		return &Command{}, err
+	}
 
 	switch m.Action() {
 	case protocol.Action_handshake:
