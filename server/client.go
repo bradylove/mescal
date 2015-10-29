@@ -49,13 +49,13 @@ HandlerLoop:
 				decodedCmd.Action,
 				sb.Key)
 
-			store.HandleCommand(decodedCmd, c.conn)
+			memoryStore.handleCommand(decodedCmd, c.conn)
 		case msg.SetCommand:
 			log.Printf("Command received action=%d subCommand=SetCommand key=%s\n",
 				decodedCmd.Action,
 				sb.Key)
 
-			store.HandleCommand(decodedCmd, c.conn)
+			memoryStore.handleCommand(decodedCmd, c.conn)
 		default:
 			log.Println("Unknown sub command received")
 		}

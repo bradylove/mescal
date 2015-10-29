@@ -4,13 +4,12 @@ import (
 	"crypto/rand"
 	"errors"
 	"fmt"
-	. "github.com/bradylove/mescal/store"
 	"log"
 	"net"
 )
 
 var cfg Config
-var store *Store
+var memoryStore *store
 
 const (
 	version = "0.1.0"
@@ -23,7 +22,7 @@ func main() {
 	log.SetFlags(log.LUTC | log.Ldate | log.Ltime | log.Lshortfile)
 	log.Println("Starting Mescal on port :" + cfg.Port)
 
-	store = NewStore()
+	memoryStore = newStore()
 
 	runServer()
 }
