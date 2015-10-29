@@ -49,8 +49,13 @@ HandlerLoop:
 				decodedCmd.Action,
 				sb.Key)
 
-			// TODO send command to store
-			decodedCmd.Encode(c.conn)
+			store.HandleCommand(decodedCmd, c.conn)
+		case msg.SetCommand:
+			log.Printf("Command received action=%d subCommand=SetCommand key=%s\n",
+				decodedCmd.Action,
+				sb.Key)
+
+			store.HandleCommand(decodedCmd, c.conn)
 		default:
 			log.Println("Unknown sub command received")
 		}

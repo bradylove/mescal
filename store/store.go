@@ -48,6 +48,8 @@ func NewStore() *Store {
 func (s *Store) setupPool() {
 	s.wg.Add(workerCount)
 
+	// TODO: Make this smarter, each connection should get its own go routine for
+	// talking to the store
 	for i := 0; i < workerCount; i++ {
 		go s.manageStore()
 	}

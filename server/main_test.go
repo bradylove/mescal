@@ -12,14 +12,18 @@ const (
 	failed  = "\033[0;31m\u2717\033[0m"
 )
 
-func TestFoo(t *testing.T) {
+func startServer() {
 	cfg = NewConfig()
 	go runServer()
 
 	time.Sleep(100 * time.Millisecond)
+}
 
+func TestClientServerHandshake(t *testing.T) {
 	t.Log("Given I have a running server")
 	{
+		startServer()
+
 		t.Log("\tAnd I connect to it as a new client")
 		{
 			conn, err := net.Dial("tcp", "localhost:8899")
@@ -57,5 +61,31 @@ func TestFoo(t *testing.T) {
 			}
 		}
 	}
-
 }
+
+// func TestClientSendsGetCommand(t *testing.T) {
+//	t.Log("Given I have a running server")
+//	{
+//		startServer()
+
+//		t.Log("\tAs a client I send a GET command")
+//		{
+//			conn, err := net.Dial("tcp", "localhost:8899")
+//			if err != nil {
+//				t.Fatalf("\t\tFailed to open connection: %v %s", failed, err.Error())
+//			}
+
+//			t.Logf("\t\tSuccessfully connected to server %v", succeed)
+
+//			cmd := msg.NewCommand("1234", msg.NewHandshakeCommand("mescal go version 1.2.3"))
+//			if err = cmd.Encode(conn); err != nil {
+//				t.Fatalf("\t\tFailed to send client handshake %v %s", failed, err.Error())
+//			}
+
+//			res, err := msg.DecodeResult(conn)
+//			if err != nil {
+//				t.Fatalf("\t\tIt successfully received and decoded server handshake %v %s", failed, err.Error())
+//			}
+//		}
+//	}
+// }
