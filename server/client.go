@@ -5,16 +5,16 @@ import (
 	"github.com/bradylove/mescal/msg"
 	"io"
 	"log"
-	"net"
 )
 
 type Client struct {
-	id   string
-	conn net.Conn
+	id    string
+	conn  io.ReadWriteCloser
+	store *Store
 }
 
-func NewClient(id string, conn net.Conn) Client {
-	return Client{id, conn}
+func NewClient(id string, conn io.ReadWriteCloser, s *Store) Client {
+	return Client{id, conn, s}
 }
 
 func (c Client) close() {
@@ -22,7 +22,7 @@ func (c Client) close() {
 	c.conn.Close()
 }
 
-func (c Client) handle() {
+func (c Client) Handle() {
 	err := c.handshake()
 	if err != nil {
 		log.Printf("Client handshake failed clientId=%s reason=%s", c.id, err.Error())
@@ -49,13 +49,13 @@ HandlerLoop:
 				decodedCmd.Action,
 				sb.Key)
 
-			memoryStore.handleCommand(decodedCmd, c.conn)
+			c.store.HandleCommand(decodedCmd, c.conn)
 		case msg.SetCommand:
 			log.Printf("Command received action=%d subCommand=SetCommand key=%s\n",
 				decodedCmd.Action,
 				sb.Key)
 
-			memoryStore.handleCommand(decodedCmd, c.conn)
+			c.store.HandleCommand(decodedCmd, c.conn)
 		default:
 			log.Println("Unknown sub command received")
 		}

@@ -8,26 +8,23 @@ import (
 	"net"
 )
 
-var cfg Config
-var memoryStore *store
-
 const (
 	version = "0.1.0"
 )
 
 func main() {
-	cfg = NewConfig()
+	cfg := NewConfig()
 
 	log.SetPrefix("[mescal] ")
 	log.SetFlags(log.LUTC | log.Ldate | log.Ltime | log.Lshortfile)
 	log.Println("Starting Mescal on port :" + cfg.Port)
 
-	memoryStore = newStore()
-
-	runServer()
+	RunServer(cfg)
 }
 
-func runServer() {
+func RunServer(cfg Config) {
+	memoryStore := NewStore()
+
 	ln, err := net.Listen("tcp", ":"+cfg.Port)
 	if err != nil {
 		log.Println("Failed to start server:", err.Error())
@@ -48,8 +45,8 @@ func runServer() {
 
 		log.Printf("New connection opened clientId=%s", id)
 
-		c := NewClient(id, conn)
-		go c.handle()
+		c := NewClient(id, conn, memoryStore)
+		go c.Handle()
 	}
 }
 

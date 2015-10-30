@@ -21,7 +21,7 @@ type message struct {
 	writer io.Writer
 }
 
-type store struct {
+type Store struct {
 	objects objects
 	wg      sync.WaitGroup
 	msgs    chan message
@@ -31,13 +31,10 @@ const (
 	workerCount = 20
 )
 
-func newStore() *store {
-	s := store{
-		objects: objects{
-			"foo": {"foo", "bar", int64(1234)},
-			"fuz": {"fuz", "baz", int64(1234)},
-		},
-		msgs: make(chan message),
+func NewStore() *Store {
+	s := Store{
+		objects: objects{},
+		msgs:    make(chan message),
 	}
 
 	s.setupPool()
@@ -45,7 +42,7 @@ func newStore() *store {
 	return &s
 }
 
-func (s *store) setupPool() {
+func (s *Store) setupPool() {
 	s.wg.Add(workerCount)
 
 	// TODO: Make this smarter, each connection should get its own go routine for
@@ -55,7 +52,7 @@ func (s *store) setupPool() {
 	}
 }
 
-func (s *store) manageStore() {
+func (s *Store) manageStore() {
 StoreHandler:
 	for {
 		m, ok := <-s.msgs
@@ -76,7 +73,7 @@ StoreHandler:
 	s.wg.Done()
 }
 
-func (s *store) handleGetCommand(cmd *msg.Command, sb msg.GetCommand, w io.Writer) {
+func (s *Store) handleGetCommand(cmd *msg.Command, sb msg.GetCommand, w io.Writer) {
 	obj := s.objects[sb.Key]
 
 	res := msg.NewResult(
@@ -88,7 +85,7 @@ func (s *store) handleGetCommand(cmd *msg.Command, sb msg.GetCommand, w io.Write
 	res.Encode(w)
 }
 
-func (s *store) handleSetCommand(cmd *msg.Command, sb msg.SetCommand, w io.Writer) {
+func (s *Store) handleSetCommand(cmd *msg.Command, sb msg.SetCommand, w io.Writer) {
 	s.objects[sb.Key] = object{sb.Key, sb.Value, sb.Expiry}
 
 	res := msg.NewResult(
@@ -100,14 +97,14 @@ func (s *store) handleSetCommand(cmd *msg.Command, sb msg.SetCommand, w io.Write
 	res.Encode(w)
 }
 
-func (s *store) handleCommand(cmd *msg.Command, w io.Writer) {
+func (s *Store) HandleCommand(cmd *msg.Command, w io.Writer) {
 	s.msgs <- message{cmd, w}
 }
 
-func (s *store) wait() {
+func (s *Store) wait() {
 	s.wg.Wait()
 }
 
-func (s *store) close() {
+func (s *Store) close() {
 	close(s.msgs)
 }
