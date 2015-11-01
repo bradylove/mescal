@@ -17,11 +17,17 @@ func main() {
 
 	block, _ := pem.Decode(caFile)
 	caCert, err := x509.ParseCertificate(block.Bytes)
-
 	certPool.AddCert(caCert)
+
+	clientCert, err := tls.LoadX509KeyPair("../test/cert.pem", "../test/key.pem")
+	if err != nil {
+		panic(err)
+	}
+
 	tlsCfg := tls.Config{
-		RootCAs:    certPool,
-		ServerName: "localhost",
+		Certificates: []tls.Certificate{clientCert},
+		RootCAs:      certPool,
+		ServerName:   "localhost",
 	}
 
 	conn, err := tls.Dial("tcp", "127.0.0.1:4333", &tlsCfg)

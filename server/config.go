@@ -2,7 +2,9 @@ package main
 
 import (
 	"crypto/tls"
+	"crypto/x509"
 	"gopkg.in/alecthomas/kingpin.v2"
+	"io/ioutil"
 )
 
 type Config struct {
@@ -40,6 +42,24 @@ func (c Config) TLSEnabled() bool {
 	return false
 }
 
+func (c Config) TLSClientAuthEnabled() bool {
+	return c.ClientCAPath != ""
+}
+
+func (c Config) ClientCAsPool() *x509.CertPool {
+	certPool := x509.NewCertPool()
+	caFile, err := ioutil.ReadFile(c.ClientCAPath)
+	if err != nil {
+		panic(err)
+	}
+
+	if ok := certPool.AppendCertsFromPEM(caFile); !ok {
+		panic("Failed to add client CA to cert pool.")
+	}
+
+	return certPool
+}
+
 func (c Config) TLSCertificate() tls.Certificate {
 	keyPair, err := tls.LoadX509KeyPair(c.TLSCrtPath, c.TLSKeyPath)
 	if err != nil {
@@ -52,7 +72,14 @@ func (c Config) TLSCertificate() tls.Certificate {
 func (c Config) TLSConfig() *tls.Config {
 	certs := []tls.Certificate{c.TLSCertificate()}
 
-	return &tls.Config{
+	tlsConfig := tls.Config{
 		Certificates: certs,
 	}
+
+	if c.TLSClientAuthEnabled() {
+		tlsConfig.ClientCAs = c.ClientCAsPool()
+		tlsConfig.ClientAuth = tls.RequireAndVerifyClientCert
+	}
+
+	return &tlsConfig
 }
