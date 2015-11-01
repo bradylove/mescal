@@ -30,6 +30,19 @@ $ cd client
 $ go build -i
 #+END_SRC
 
+** Todo
+- [ ] SSL/TLS
+- [ ] Increment command
+- [ ] Decrement command
+- [ ] Delete command
+- [ ] Expiration/Cleanup of expired keys/values
+- [ ] REPL client
+- [ ] Go client library
+- [ ] Ruby client library
+- [ ] Graceful server shutdown
+- [ ] Stat command
+- [ ] Ping command
+- [ ] Distributed servers (Down the road a ways :))
 ** License
 The MIT License (MIT)
 
