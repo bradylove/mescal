@@ -1,33 +1,58 @@
 package main
 
 import (
+	"crypto/tls"
 	"gopkg.in/alecthomas/kingpin.v2"
 )
 
 type Config struct {
-	Port            string
-	TLSCrtPath      string
-	TLSKeyPath      string
-	RootCAPath      string
-	VerifyClientCrt bool
+	Port         string
+	TLSCrtPath   string
+	TLSKeyPath   string
+	ClientCAPath string
 }
 
 func NewConfig() Config {
-	port := kingpin.Flag("port", "Port to run the server on.").Short('p').String()
+	port := kingpin.Flag("port", "Port to run the server on.").Short('p').Default("4567").String()
 
 	// Flags needed: tls_crt, tls_key, root_ca, verify_client_crt
-	tlsCrt := kingpin.Flag("tls_crt", "Path to server's TLS certificate in PEM format").String()
-	tlsKey := kingpin.Flag("tls_key", "Path to server's TLS key in PEM format").String()
-	rootCa := kingpin.Flag("root_ca", "Path to server's root CA file in PEM format").String()
-	verifyClientCrt := kingpin.Flag("verify_client_crt", "Whether to validate the client certificate or not.").Bool()
+	tlsCrt := kingpin.Flag("tls_crt", "Path to server's TLS certificate in PEM format. Enables TLS and requires tls_key.").String()
+	tlsKey := kingpin.Flag("tls_key", "Path to server's TLS key in PEM format. Enables TLS and requires tls_cert.").String()
+	clientCa := kingpin.Flag("client_ca", "Path to server's client CA file in PEM format. Enables TLS client auth.").String()
+
+	// TODO: If tls_crt or tls_key given. Validate that both are given.
 
 	kingpin.Parse()
 
 	return Config{
-		Port:            *port,
-		TLSCrtPath:      *tlsCrt,
-		TLSKeyPath:      *tlsKey,
-		RootCAPath:      *rootCa,
-		VerifyClientCrt: *verifyClientCrt,
+		Port:         *port,
+		TLSCrtPath:   *tlsCrt,
+		TLSKeyPath:   *tlsKey,
+		ClientCAPath: *clientCa,
+	}
+}
+
+func (c Config) TLSEnabled() bool {
+	if c.TLSCrtPath != "" && c.TLSKeyPath != "" {
+		return true
+	}
+
+	return false
+}
+
+func (c Config) TLSCertificate() tls.Certificate {
+	keyPair, err := tls.LoadX509KeyPair(c.TLSCrtPath, c.TLSKeyPath)
+	if err != nil {
+		panic(err)
+	}
+
+	return keyPair
+}
+
+func (c Config) TLSConfig() *tls.Config {
+	certs := []tls.Certificate{c.TLSCertificate()}
+
+	return &tls.Config{
+		Certificates: certs,
 	}
 }

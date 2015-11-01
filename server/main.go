@@ -2,6 +2,7 @@ package main
 
 import (
 	"crypto/rand"
+	"crypto/tls"
 	"errors"
 	"fmt"
 	"log"
@@ -25,7 +26,14 @@ func main() {
 func RunServer(cfg Config) {
 	memoryStore := NewStore()
 
-	ln, err := net.Listen("tcp", ":"+cfg.Port)
+	var ln net.Listener
+	var err error
+
+	if cfg.TLSEnabled() {
+		ln, err = tls.Listen("tcp", ":"+cfg.Port, cfg.TLSConfig())
+	} else {
+		ln, err = net.Listen("tcp", ":"+cfg.Port)
+	}
 	if err != nil {
 		log.Println("Failed to start server:", err.Error())
 	}
