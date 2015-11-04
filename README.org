@@ -31,7 +31,6 @@ $ go build -i
 #+END_SRC
 
 ** Todo
-- [ ] SSL/TLS
 - [ ] Increment command
 - [ ] Decrement command
 - [ ] Delete command
