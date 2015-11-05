@@ -19,9 +19,6 @@ var _ = Describe("Parser", func() {
 	})
 
 	It("can parse a set command", func() {
-		fmt.Println('0')
-		fmt.Println('9')
-
 		parser := NewParser("set some_key 123456789 Hello World")
 		statement, err := parser.Parse()
 		Expect(err).To(BeNil())

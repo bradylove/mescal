@@ -70,8 +70,8 @@ func (p *Parser) Parse() (Statement, error) {
 		if err != nil {
 			return s, fmt.Errorf("failed to parse %q as integer", lit)
 		}
-
 		s.Expiry = int64(i)
+		s.Value = strings.Trim(p.scanToEnd(), " ")
 	}
 
 	return s, nil
@@ -99,6 +99,10 @@ func (p *Parser) scanIgnoreWhitespace() (Token, string) {
 	}
 
 	return tok, lit
+}
+
+func (p *Parser) scanToEnd() string {
+	return p.scanner.readToEnd()
 }
 
 type Scanner struct {
@@ -137,6 +141,20 @@ func (s *Scanner) scan() (Token, string) {
 	}
 
 	return ILLEGAL, string(ch)
+}
+
+func (s *Scanner) readToEnd() string {
+	str := ""
+
+	for {
+		ch := s.read()
+
+		if ch == eof {
+			return str
+		}
+
+		str += string(ch)
+	}
 }
 
 func (s *Scanner) scanWhitespace() (Token, string) {
