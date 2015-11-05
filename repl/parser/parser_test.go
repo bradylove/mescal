@@ -1,7 +1,6 @@
 package parser_test
 
 import (
-	"fmt"
 	. "github.com/bradylove/mescal/repl/parser"
 
 	. "github.com/onsi/ginkgo"
