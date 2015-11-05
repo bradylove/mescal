@@ -3,6 +3,8 @@ package parser
 import (
 	"bufio"
 	"bytes"
+	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -44,7 +46,35 @@ func NewParser(input string) *Parser {
 }
 
 func (p *Parser) Parse() (Statement, error) {
-	return Statement{}, nil
+	s := Statement{}
+
+	tok, lit := p.scanIgnoreWhitespace()
+	if tok != GET && tok != SET {
+		return s, fmt.Errorf("found %q expected command", lit)
+	}
+	s.Action = tok
+
+	tok, lit = p.scanIgnoreWhitespace()
+	if tok != IDENT {
+		return s, fmt.Errorf("found %q expectend key", lit)
+	}
+	s.Key = lit
+
+	if s.Action == SET {
+		tok, lit = p.scanIgnoreWhitespace()
+		if tok != IDENT {
+			return s, fmt.Errorf("found %q expectend expiry", lit)
+		}
+
+		i, err := strconv.ParseInt(lit, 10, 64)
+		if err != nil {
+			return s, fmt.Errorf("failed to parse %q as integer", lit)
+		}
+
+		s.Expiry = int64(i)
+	}
+
+	return s, nil
 }
 
 func (p *Parser) scan() (Token, string) {
@@ -96,7 +126,7 @@ func (s *Scanner) scan() (Token, string) {
 	if isWhitespace(ch) {
 		s.unread()
 		return s.scanWhitespace()
-	} else if isLetter(ch) {
+	} else if isText(ch) {
 		s.unread()
 		return s.scanIdent()
 	}
@@ -134,7 +164,7 @@ func (s *Scanner) scanIdent() (Token, string) {
 	for {
 		if ch := s.read(); ch == eof {
 			break
-		} else if !isLetter(ch) && ch != '_' {
+		} else if !isText(ch) && ch != '_' {
 			s.unread()
 			break
 		} else {
@@ -156,6 +186,8 @@ func isWhitespace(ch rune) bool {
 	return ch == ' ' || ch == '\t' || ch == '\n'
 }
 
-func isLetter(ch rune) bool {
-	return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch < 'Z')
+func isText(ch rune) bool {
+	return (ch >= 'a' && ch <= 'z') ||
+		(ch >= 'A' && ch <= 'Z') ||
+		(ch >= '0' && ch <= '9')
 }

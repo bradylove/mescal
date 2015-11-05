@@ -1,6 +1,7 @@
 package parser_test
 
 import (
+	"fmt"
 	. "github.com/bradylove/mescal/repl/parser"
 
 	. "github.com/onsi/ginkgo"
@@ -18,13 +19,16 @@ var _ = Describe("Parser", func() {
 	})
 
 	It("can parse a set command", func() {
+		fmt.Println('0')
+		fmt.Println('9')
+
 		parser := NewParser("set some_key 123456789 Hello World")
 		statement, err := parser.Parse()
 		Expect(err).To(BeNil())
 
 		Expect(statement.Action).To(Equal(SET))
 		Expect(statement.Key).To(Equal("some_key"))
-		Expect(statement.Expiry).To(Equal(123456789))
+		Expect(statement.Expiry).To(Equal(int64(123456789)))
 		Expect(statement.Value).To(Equal("Hello World"))
 	})
 })
