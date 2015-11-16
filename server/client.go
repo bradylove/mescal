@@ -34,13 +34,8 @@ HandlerLoop:
 	for {
 		decodedCmd, err := msg.DecodeCommand(c.conn)
 		if err != nil {
-			if err == io.EOF {
-				c.close()
-				break HandlerLoop
-			}
-
-			// TODO: DO NOT PANIC!
-			panic(err)
+			c.close()
+			break HandlerLoop
 		}
 
 		switch sb := decodedCmd.SubCommand.(type) {
