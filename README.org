@@ -4,33 +4,11 @@ Mescal is an in memory key/value store written in Go.
 ** Setup for development
 
 - Install Go (http://golang.org)
-- Install capnproto (https://capnproto.org/install.html)
 - Install Mescal dependencies
 
-#+BEGIN_SRC bash
-$ go get -u -t zombiezen.com/go/capnproto/...
-$ go get github.com/onsi/ginkgo/ginkgo
-$ go get github.com/onsi/gomega
-#+END_SRC
-
-** Run tests
-#+BEGIN_SRC bash
-$ ginkgo -r
-#+END_SRC
-
-** Build server
-#+BEGIN_SRC bash
-$ cd server
-$ go build -i
-#+END_SRC
-
-** Build client
-#+BEGIN_SRC bash
-$ cd client
-$ go build -i
-#+END_SRC
-
 ** Todo
+- [ ] Set command
+- [ ] Get command
 - [ ] Increment command
 - [ ] Decrement command
 - [ ] Delete command
@@ -41,11 +19,12 @@ $ go build -i
 - [ ] Graceful server shutdown
 - [ ] Stat command
 - [ ] Ping command
-- [ ] Distributed servers (Down the road a ways :))
+- [ ] Distributed servers
+
 ** License
 The MIT License (MIT)
 
-Copyright (c) 2015 Brady Love <love.brady@gmail.com>
+Copyright (c) 2017 Brady Love <love.brady@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
