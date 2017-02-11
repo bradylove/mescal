@@ -20,6 +20,10 @@ Mescal is an in memory key/value store written in Go.
   - [ ] Delete
   - [ ] Stat
   - [ ] Ping
+- [ ] Flexible configuration
+  - [ ] Flags
+  - [ ] Config file
+  - [ ] Environment variables
 - [ ] Watch for changes to a keys value
 - [ ] TLS
 - [ ] MutualTLS
@@ -29,6 +33,7 @@ Mescal is an in memory key/value store written in Go.
 - [ ] Ruby client library
 - [ ] Graceful server shutdown
 - [ ] Distributed servers
+- [ ] HTTP Health Check
 
 ** License
 The MIT License (MIT)
