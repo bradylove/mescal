@@ -4,21 +4,27 @@ Mescal is an in memory key/value store written in Go.
 ** Setup for development
 
 - Install Go (http://golang.org)
-- Install Mescal dependencies
+- Install Mescal dependencies (`./get-deps.sh`)
 
-** Todo
-- [ ] Set command
-- [ ] Get command
-- [ ] Increment command
-- [ ] Decrement command
-- [ ] Delete command
+** Features
+- [ ] gRPC Transport
+- [ ] Multiple value types
+- [ ] Commands
+  - [ ] Set
+  - [ ] Get
+  - [ ] Increment
+  - [ ] Decrement
+  - [ ] Delete
+  - [ ] Stat
+  - [ ] Ping
+- [ ] Watch for changes to a keys value
+- [ ] TLS
+- [ ] MutualTLS
 - [ ] Expiration/Cleanup of expired keys/values
 - [ ] REPL client
 - [ ] Go client library
 - [ ] Ruby client library
 - [ ] Graceful server shutdown
-- [ ] Stat command
-- [ ] Ping command
 - [ ] Distributed servers
 
 ** License

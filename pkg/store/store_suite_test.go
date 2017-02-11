@@ -1,7 +1,5 @@
 package store_test
 
-//go:generate hel
-
 import (
 	"testing"
 

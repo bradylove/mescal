@@ -1,9 +1,8 @@
 package api
 
 import (
-	"context"
-
 	"github.com/bradylove/mescal/pkg/mescal"
+	"golang.org/x/net/context"
 )
 
 type Store interface {
