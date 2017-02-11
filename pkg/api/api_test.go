@@ -2,43 +2,65 @@ package api_test
 
 import (
 	"context"
-	"testing"
 
-	"github.com/bradylove/mescal/pkg/api"
 	"github.com/bradylove/mescal/pkg/mescal"
-	"github.com/stretchr/testify/assert"
 )
 
-func TestSetWithText(t *testing.T) {
-	resp, err := doSet(buildTextSetRequest("a-key", "a-value"))
-	assert.Nil(t, err)
+var (
+	ctx = context.Background()
+)
+
+func (s *APITestSuite) TestSetWithText() {
+	close(s.mockStore.SetOutput.Err)
+
+	resp, err := s.api.Set(ctx, buildTextSetRequest("a-key", "a-value"))
+	s.Nil(err)
+
+	s.Equal(len(s.mockStore.SetCalled), 1)
 
 	kv := resp.GetKeyValue()
-	assert.Equal(t, kv.Key, "a-key")
-	assert.Equal(t, kv.GetText(), "a-value")
+	s.Equal(len(s.mockStore.SetCalled), 1)
+	s.Equal(kv.Key, "a-key")
+	s.Equal(kv.GetText(), "a-value")
 }
 
-func TestSetWithInteger(t *testing.T) {
-	resp, err := doSet(buildIntegerSetRequest("a-key", 1234))
-	assert.Nil(t, err)
+func (s *APITestSuite) TestSetWithInteger() {
+	close(s.mockStore.SetOutput.Err)
+
+	resp, err := s.api.Set(ctx, buildIntegerSetRequest("a-key", 1234))
+	s.Nil(err)
 
 	kv := resp.GetKeyValue()
-	assert.Equal(t, kv.Key, "a-key")
-	assert.Equal(t, kv.GetInteger(), int64(1234))
+	s.Equal(len(s.mockStore.SetCalled), 1)
+	s.Equal(kv.Key, "a-key")
+	s.Equal(kv.GetInteger(), int64(1234))
 }
 
-func TestSetWithDecimal(t *testing.T) {
-	resp, err := doSet(buildDecimalSetRequest("a-key", 1234.1234))
-	assert.Nil(t, err)
+func (s *APITestSuite) TestSetWithDecimal() {
+	close(s.mockStore.SetOutput.Err)
+
+	resp, err := s.api.Set(ctx, buildDecimalSetRequest("a-key", 1234.1234))
+	s.Nil(err)
 
 	kv := resp.GetKeyValue()
-	assert.Equal(t, kv.Key, "a-key")
-	assert.Equal(t, kv.GetDecimal(), float64(1234.1234))
+	s.Equal(len(s.mockStore.SetCalled), 1)
+	s.Equal(kv.Key, "a-key")
+	s.Equal(kv.GetDecimal(), float64(1234.1234))
 }
 
-func doSet(req *mescal.SetRequest) (*mescal.SetResponse, error) {
-	a := api.New()
-	return a.Set(context.Background(), req)
+func (s *APITestSuite) TestGet() {
+	close(s.mockStore.GetOutput.Err)
+	s.mockStore.GetOutput.KeyValue <- &mescal.KeyValue{
+		Key:   "a-key",
+		Value: &mescal.KeyValue_Text{Text: "a-value"},
+	}
+
+	resp, err := s.api.Get(ctx, &mescal.GetRequest{Key: "a-key"})
+	s.Nil(err)
+
+	kv := resp.GetKeyValue()
+	s.Equal(kv.Key, "a-key")
+	s.Equal(kv.GetText(), "a-value")
 }
 
 func buildTextSetRequest(key string, value string) *mescal.SetRequest {
