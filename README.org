@@ -4,7 +4,7 @@ Mescal is an in memory key/value store written in Go.
 ** Setup for development
 
 - Install Go (http://golang.org)
-- Install Mescal dependencies (`./get-deps.sh`)
+- Install Mescal dependencies `./get-deps.sh`
 
 ** Features
 - [X] gRPC Transport
