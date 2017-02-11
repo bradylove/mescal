@@ -5,3 +5,4 @@ mescal
 /client/client
 *.swp
 **/*.test
+vim-go-test-compile
