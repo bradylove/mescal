@@ -2,9 +2,9 @@ package store_test
 
 import (
 	"fmt"
-	"math/rand"
 
 	"github.com/bradylove/mescal/pkg/mescal"
+	uuid "github.com/satori/go.uuid"
 )
 
 func (s *StoreTestSuite) TestSetAndGet() {
@@ -44,11 +44,13 @@ func (s *StoreTestSuite) TestSetAndGetDoNotHaveDataRace() {
 	}
 }
 
+// Testing with 1 million records is showing no collisions and overwrites.
+// When I bump the number up to 10 million I am seeing 2-4 collisions.
 func (s *StoreTestSuite) TestMinimizingColisions() {
 	keys := make([]string, 1000000)
 
 	for i := range keys {
-		keys[i] = randString(20)
+		keys[i] = uuid.NewV4().String()
 	}
 
 	for _, k := range keys {
@@ -65,14 +67,4 @@ func (s *StoreTestSuite) TestMinimizingColisions() {
 		s.Nil(err, fmt.Sprint("failed on attempt #", i))
 		s.Equal(resp.Key, k)
 	}
-}
-
-var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-
-func randString(n int) string {
-	b := make([]rune, n)
-	for i := range b {
-		b[i] = letterRunes[rand.Intn(len(letterRunes))]
-	}
-	return string(b)
 }
